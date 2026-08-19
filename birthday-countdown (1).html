@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Countdown to August 26th</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,ital@9..144,300..700,0..1&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep:#0a0e27;
+    --navy-mid:#12173b;
+    --navy-soft:#1c2350;
+    --gold:#e8c468;
+    --gold-soft:#c9a24f;
+    --rose:#ff8a9e;
+    --cream:#f5f1e6;
+    --muted:#8b90ac;
+    --glass:rgba(245,241,230,0.05);
+    --glass-border:rgba(232,196,104,0.18);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html,body{
+    height:100%;
+    background:var(--navy-deep);
+    color:var(--cream);
+    font-family:'Inter',sans-serif;
+    overflow-x:hidden;
+  }
+
+  body{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    padding:32px 20px;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(232,196,104,0.10), transparent),
+      radial-gradient(ellipse 60% 40% at 85% 90%, rgba(255,138,158,0.08), transparent),
+      linear-gradient(180deg, var(--navy-deep) 0%, var(--navy-mid) 55%, var(--navy-deep) 100%);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+
+  /* ---------- Starfield ---------- */
+  #stars{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+  }
+  .star{
+    position:absolute;
+    background:var(--cream);
+    border-radius:50%;
+    opacity:0.6;
+    animation:twinkle var(--dur,4s) ease-in-out infinite;
+    animation-delay:var(--delay,0s);
+  }
+  @keyframes twinkle{
+    0%,100%{opacity:0.15; transform:scale(1);}
+    50%{opacity:0.9; transform:scale(1.4);}
+  }
+
+  /* ---------- Layout ---------- */
+  .stage{
+    position:relative;
+    z-index:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    max-width:920px;
+    width:100%;
+  }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.42em;
+    text-transform:uppercase;
+    color:var(--gold-soft);
+    opacity:0;
+    animation:fadeUp 0.9s ease forwards 0.15s;
+  }
+
+  /* ---------- Candle (signature element) ---------- */
+  .candle-wrap{
+    width:74px;
+    height:150px;
+    margin:26px 0 8px;
+    opacity:0;
+    animation:fadeUp 1s ease forwards 0.35s;
+    position:relative;
+  }
+
+  .flame{
+    transform-origin:50% 100%;
+    animation:flicker 2.6s ease-in-out infinite;
+    filter:drop-shadow(0 0 10px rgba(232,196,104,0.85)) drop-shadow(0 0 26px rgba(255,138,158,0.35));
+  }
+  @keyframes flicker{
+    0%,100%{ transform:rotate(-1.2deg) scaleY(1); }
+    25%{ transform:rotate(1.6deg) scaleY(1.03); }
+    50%{ transform:rotate(-0.8deg) scaleY(0.97); }
+    75%{ transform:rotate(1.1deg) scaleY(1.02); }
+  }
+
+  .glow-pulse{
+    animation:glowpulse 2.6s ease-in-out infinite;
+  }
+  @keyframes glowpulse{
+    0%,100%{ opacity:0.55; }
+    50%{ opacity:0.9; }
+  }
+
+  h1.headline{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-style:italic;
+    font-size:clamp(2.6rem, 8vw, 5.2rem);
+    line-height:1.02;
+    letter-spacing:-0.01em;
+    color:var(--cream);
+    opacity:0;
+    animation:fadeUp 1s ease forwards 0.55s;
+  }
+  h1.headline .accent{
+    font-style:normal;
+    font-weight:300;
+    background:linear-gradient(120deg, var(--gold) 0%, var(--rose) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+
+  .subhead{
+    margin-top:10px;
+    font-size:15px;
+    color:var(--muted);
+    letter-spacing:0.02em;
+    opacity:0;
+    animation:fadeUp 1s ease forwards 0.7s;
+  }
+
+  @keyframes fadeUp{
+    from{ opacity:0; transform:translateY(14px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  /* ---------- Countdown ---------- */
+  .countdown{
+    display:grid;
+    grid-template-columns:repeat(4, minmax(84px, 128px));
+    gap:14px;
+    margin-top:52px;
+    opacity:0;
+    animation:fadeUp 1s ease forwards 0.9s;
+  }
+
+  .unit{
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    border-radius:16px;
+    padding:22px 8px 16px;
+    backdrop-filter:blur(6px);
+    position:relative;
+    overflow:hidden;
+    transition:border-color 0.4s ease, transform 0.4s ease;
+  }
+  .unit::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity:0.5;
+  }
+  .unit:hover{
+    border-color:rgba(232,196,104,0.4);
+    transform:translateY(-3px);
+  }
+
+  .num{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:clamp(2.1rem, 6vw, 3.3rem);
+    line-height:1;
+    font-variant-numeric:tabular-nums;
+    color:var(--cream);
+    letter-spacing:-0.02em;
+  }
+  .num.flip{ animation:digitshift 0.5s ease; }
+  @keyframes digitshift{
+    0%{ transform:translateY(-8px); opacity:0.3; }
+    100%{ transform:translateY(0); opacity:1; }
+  }
+
+  .label{
+    margin-top:8px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  .colon{
+    display:none;
+  }
+
+  /* ---------- Date strip / footer ---------- */
+  .target-date{
+    margin-top:30px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.14em;
+    color:var(--muted);
+    opacity:0;
+    animation:fadeUp 1s ease forwards 1.05s;
+  }
+  .target-date span{ color:var(--gold-soft); }
+
+  .divider{
+    width:1px;
+    height:36px;
+    background:linear-gradient(180deg, transparent, var(--glass-border), transparent);
+    margin:34px auto 0;
+    opacity:0;
+    animation:fadeUp 1s ease forwards 1.2s;
+  }
+
+  footer{
+    margin-top:18px;
+    font-size:12px;
+    color:var(--muted);
+    letter-spacing:0.06em;
+    opacity:0;
+    animation:fadeUp 1s ease forwards 1.3s;
+  }
+
+  /* ---------- Celebration state ---------- */
+  .celebrate h1.headline{ font-size:clamp(2.8rem, 9vw, 6rem); }
+  .confetti{
+    position:fixed;
+    top:-10px;
+    z-index:5;
+    pointer-events:none;
+    border-radius:2px;
+    animation:fall linear forwards;
+  }
+  @keyframes fall{
+    to{ transform:translateY(110vh) rotate(540deg); opacity:0.9; }
+  }
+
+  .hidden{ display:none !important; }
+
+  @media (max-width:520px){
+    .countdown{ grid-template-columns:repeat(2, minmax(110px,1fr)); gap:12px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<div class="stage" id="stage">
+  <div class="eyebrow">The countdown is on</div>
+
+  <div class="candle-wrap">
+    <svg viewBox="0 0 74 150" width="74" height="150" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse class="glow-pulse" cx="37" cy="38" rx="30" ry="30" fill="url(#glowGrad)"/>
+      <g class="flame">
+        <path d="M37 8C37 8 22 26 22 40C22 51.5 28.7 58 37 58C45.3 58 52 51.5 52 40C52 26 37 8 37 8Z" fill="url(#flameGrad)"/>
+        <path d="M37 24C37 24 30 35 30 43C30 49 32.8 52.5 37 52.5C41.2 52.5 44 49 44 43C44 35 37 24 37 24Z" fill="url(#flameInner)"/>
+      </g>
+      <rect x="27" y="60" width="20" height="70" rx="2" fill="url(#waxGrad)"/>
+      <rect x="27" y="60" width="20" height="8" fill="#0a0e27" opacity="0.15"/>
+      <rect x="24" y="128" width="26" height="8" rx="2" fill="#151a3d"/>
+      <line x1="37" y1="12" x2="37" y2="26" stroke="#3a2f1a" stroke-width="1.4"/>
+      <defs>
+        <radialGradient id="glowGrad" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stop-color="#e8c468" stop-opacity="0.55"/>
+          <stop offset="100%" stop-color="#e8c468" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="flameGrad" x1="37" y1="8" x2="37" y2="58" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#ffe9b0"/>
+          <stop offset="45%" stop-color="#e8c468"/>
+          <stop offset="100%" stop-color="#e2914f"/>
+        </linearGradient>
+        <linearGradient id="flameInner" x1="37" y1="24" x2="37" y2="52.5" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#fff6dd"/>
+          <stop offset="100%" stop-color="#ffcf7a"/>
+        </linearGradient>
+        <linearGradient id="waxGrad" x1="27" y1="60" x2="47" y2="130" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#f5f1e6"/>
+          <stop offset="100%" stop-color="#d8d2c0"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+
+  <h1 class="headline">Wishing you a very<br><span class="accent">happy birthday</span></h1>
+  <div class="subhead" id="subhead">Here's what's left until August 26th</div>
+
+  <div class="countdown" id="countdown">
+    <div class="unit"><div class="num" id="days">00</div><div class="label">Days</div></div>
+    <div class="unit"><div class="num" id="hours">00</div><div class="label">Hours</div></div>
+    <div class="unit"><div class="num" id="mins">00</div><div class="label">Minutes</div></div>
+    <div class="unit"><div class="num" id="secs">00</div><div class="label">Seconds</div></div>
+  </div>
+
+  <div class="target-date">Arriving <span id="targetLabel">—</span></div>
+  <div class="divider"></div>
+  <footer>Made with care, one flicker at a time 🕯️</footer>
+</div>
+
+<script>
+  // ---------- Starfield ----------
+  const starsEl = document.getElementById('stars');
+  const starCount = window.innerWidth < 600 ? 60 : 120;
+  for (let i = 0; i < starCount; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 1.8 + 0.6;
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.top = Math.random() * 100 + 'vh';
+    s.style.setProperty('--dur', (2.5 + Math.random() * 4) + 's');
+    s.style.setProperty('--delay', (Math.random() * 4) + 's');
+    starsEl.appendChild(s);
+  }
+
+  // ---------- Countdown target ----------
+  // Next occurrence of August 26, local time
+  function getNextBirthday() {
+    const now = new Date();
+    let year = now.getFullYear();
+    let target = new Date(year, 7, 26, 0, 0, 0); // month index 7 = August
+    if (target.getTime() <= now.getTime()) {
+      target = new Date(year + 1, 7, 26, 0, 0, 0);
+    }
+    return target;
+  }
+
+  let target = getNextBirthday();
+
+  const targetLabel = document.getElementById('targetLabel');
+  targetLabel.textContent = target.toLocaleDateString(undefined, { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  const daysEl = document.getElementById('days');
+  const hoursEl = document.getElementById('hours');
+  const minsEl = document.getElementById('mins');
+  const secsEl = document.getElementById('secs');
+  const subhead = document.getElementById('subhead');
+  const stage = document.getElementById('stage');
+
+  let celebrated = false;
+  let lastVals = { d:null, h:null, m:null, s:null };
+
+  function pad(n){ return String(n).padStart(2,'0'); }
+
+  function setVal(el, val, key){
+    if (lastVals[key] !== val) {
+      el.textContent = pad(val);
+      el.classList.remove('flip');
+      void el.offsetWidth;
+      el.classList.add('flip');
+      lastVals[key] = val;
+    }
+  }
+
+  function fireConfetti(){
+    const colors = ['#e8c468', '#ff8a9e', '#f5f1e6', '#c9a24f'];
+    for (let i = 0; i < 140; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      const size = 5 + Math.random() * 6;
+      c.style.width = size + 'px';
+      c.style.height = size * 0.4 + 'px';
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.background = colors[Math.floor(Math.random() * colors.length)];
+      c.style.animationDuration = (2.5 + Math.random() * 2.5) + 's';
+      c.style.animationDelay = (Math.random() * 1.2) + 's';
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 6000);
+    }
+  }
+
+  function tick(){
+    const now = new Date();
+    let diff = target.getTime() - now.getTime();
+
+    if (diff <= 0) {
+      if (!celebrated) {
+        celebrated = true;
+        subhead.textContent = "Today's the day 🎂";
+        stage.classList.add('celebrate');
+        fireConfetti();
+        setInterval(fireConfetti, 4000);
+      }
+      diff = 0;
+    }
+
+    const d = Math.floor(diff / (1000*60*60*24));
+    const h = Math.floor((diff / (1000*60*60)) % 24);
+    const m = Math.floor((diff / (1000*60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+
+    setVal(daysEl, d, 'd');
+    setVal(hoursEl, h, 'h');
+    setVal(minsEl, m, 'm');
+    setVal(secsEl, s, 's');
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
